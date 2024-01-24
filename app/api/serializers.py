@@ -8,9 +8,33 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
         
         
-    
 
-        
+
+class FamilyMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FamilyMember
+        fields = '__all__'
+
+class MemoryPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemoryPage
+        fields = '__all__'
+
+class ExtendedMemoryPageInfoSerializer(serializers.ModelSerializer):
+    family_members = FamilyMemberSerializer(many=True)
+    
+    class Meta:
+        model = ExtendedMemoryPageInfo
+        fields = "__all__"
+                  
+
+class MemoryPageSerializer(serializers.ModelSerializer):
+    extended_info = ExtendedMemoryPageInfoSerializer(source='extendedmemorypageinfo', read_only=True)
+
+    class Meta:
+        model = MemoryPage
+        fields = '__all__'
+ 
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permissions
@@ -26,14 +50,19 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     permissions = PermissionSerializer(read_only=True, many=True)
     class Meta:
         model = Subscription
-        fields = ['id', 'name', 'description', 'price', 'max_photos', 'max_videos', 'max_audio', 'max_links', 'permissions']
+        fields = '__all__'
           
         
 class UserProfileSerializer(serializers.ModelSerializer):
-    subscription = SubscriptionSerializer(read_only=True)
-    user = UserSerializer(read_only=True)
-
+    user = UserSerializer(read_only=True)  
+    subscription = SubscriptionSerializer(read_only=True)  
+    # user_avatar = serializers.ImageField(max_length=None, use_url=True)
     class Meta:
         model = UserProfile
-        fields = ['user', 'subscription']
+        fields = '__all__'
+        
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
 

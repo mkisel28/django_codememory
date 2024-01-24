@@ -91,7 +91,8 @@ class ExtendedMemoryPageInfo(models.Model):
     memory_page = models.OneToOneField(
         MemoryPage,
         on_delete=models.CASCADE,
-        primary_key=True
+        primary_key=True,
+        verbose_name = 'Страница памяти'
     )
     place_of_birth = models.CharField(max_length=255, blank=True, null=True)
     place_of_death = models.CharField(max_length=255, blank=True, null=True)
@@ -106,6 +107,13 @@ class ExtendedMemoryPageInfo(models.Model):
     class Meta:
         verbose_name = 'Расширенная информация'
         verbose_name_plural = 'Расширенная информация'
+        
+    def __str__(self):
+        return f'Расшеренная информация к странице памяти: \
+            Имя: {self.memory_page.deceased_first_name} \
+            Фамилия: {self.memory_page.deceased_last_name}. \
+            Пользователь: {self.memory_page.user.username}'
+    
     
 class Award(models.Model):
     memory_page_info = models.ForeignKey(ExtendedMemoryPageInfo, related_name='awards', on_delete=models.CASCADE)
@@ -139,11 +147,11 @@ class Education(models.Model):
     
 class FamilyMember(models.Model):
     class CHOICES(models.TextChoices):
-        PARENT = 'parent', 'parent'
-        SIBLING = 'sibling', 'sibling'
-        CHILD = 'child', 'child'
-    memory_page_info = models.ForeignKey(ExtendedMemoryPageInfo, related_name='family_members', on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+        PARENT = 'parent', 'Родители'
+        SIBLING = 'sibling', 'Сестры/Братья'
+        CHILD = 'child', 'Дети'
+    memory_page_info = models.ForeignKey(ExtendedMemoryPageInfo, related_name='family_members', on_delete=models.CASCADE, verbose_name='Страница памяти')
+    name = models.CharField(max_length=255, verbose_name='ФИО')
     relationship = models.CharField(max_length=255, choices=CHOICES.choices)
     
     class Meta:
