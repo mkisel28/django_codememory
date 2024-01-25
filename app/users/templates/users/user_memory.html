@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Pages</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Memory Pages</h2>
+        <div id="memoryPagesContainer" class="row">
+            <!-- Карточки Memory Pages будут добавлены здесь динамически -->
+        </div>
+        <button id="createMemoryPage" class="btn btn-primary mt-3">Create Memory Page</button>
+    </div>
+
+    <!-- Bootstrap JS и Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Ваш JavaScript код -->
+    <script>
+        // JavaScript код будет здесь
+    </script>
+</body>
+</html>
+
+    <script>
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const memoryPagesContainer = document.getElementById('memoryPagesContainer');
+            const createMemoryPageButton = document.getElementById('createMemoryPage');
+        
+            createMemoryPageButton.addEventListener('click', function() {
+                // Логика для создания новой MemoryPage
+                // Например, открытие модального окна или перенаправление на страницу создания
+            });
+        
+            // Функция для загрузки существующих MemoryPages
+            function loadMemoryPages() {
+                fetch('/api/user/memory-pages/') // URL к вашему API
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(memoryPage => {
+                            const memoryPageCard = `
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${memoryPage.deceased_first_name} ${memoryPage.deceased_last_name}</h5>
+                                            <!-- Другая информация о MemoryPage -->
+                                            <a href="memory-page/${memoryPage.id}" class="btn btn-primary">View</a>
+                                            <p> ${memoryPage.user} </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            memoryPagesContainer.insertAdjacentHTML('beforeend', memoryPageCard);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        
+            // Загружаем существующие MemoryPages при загрузке страницы
+            loadMemoryPages();
+        });
+    
+    </script>
+</body>
+</html>

@@ -1,12 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
-# Create your views here.
+from .models import MemoryPage
 
 def add_memory_page(request):
-    a = {
-        "1": 121,
-        "2":3213
-    }
-    json_data = json.dumps(a)
-    return HttpResponse(json_data)
+    memory_page = MemoryPage.objects.filter(user=request.user).order_by('-id')
+    
+    return render(request, 'users/user_memory.html',  context={'memory_page': memory_page})
+
+
+
+def edit_memory_page(request, memory_page_id):
+    memory_page = MemoryPage.objects.get(id=memory_page_id, user=request.user)
+
+    return render(request, 'users/edit_memory.html', {'memory_page': memory_page})

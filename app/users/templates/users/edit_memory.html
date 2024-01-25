@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Memory Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4" >
+        <h2>Edit Memory Page</h2>
+
+        <!-- Блок для MemoryPage -->
+        <div id="memoryPageBlock" data-memoryID='{{ memory_page.id }}' class="mb-4">
+            <h3>Basic Information</h3>
+            <form id="editMemoryPageForm">
+                <input type="text" class="form-control mb-2" id="deceasedFirstName" placeholder="{{memory_page.deceased_first_name}}">
+                <input type="text" class="form-control mb-2" id="deceasedLastName" placeholder="{{memory_page.deceased_last_name}}">
+                <!-- Дополнительные поля для MemoryPage -->
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Блок для ExtendedMemoryPageInfo -->
+        <div id="extendedInfoBlock" class="mb-4">
+            <h3>Extended Information</h3>
+            <form id="editExtendedInfoForm">
+                <input type="text" class="form-control mb-2" id="placeOfBirth" placeholder="Place of Birth">
+                <input type="text" class="form-control mb-2" id="placeOfDeath" placeholder="Place of Death">
+                <!-- Дополнительные поля для ExtendedMemoryPageInfo -->
+                <button type="submit" class="btn btn-primary">Save Extended Info</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS и Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Ваш JavaScript код -->
+    <script>
+        // JavaScript код будет здесь
+    </script>
+</body>
+</html>

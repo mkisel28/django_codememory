@@ -47,10 +47,14 @@ class Permissions(models.Model):
     
     
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     user_avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     subscription = models.ForeignKey(
         Subscription, on_delete=models.SET_NULL, null=True)
+    
+    
+    def get_permission(self):
+        return Permissions.objects.get(subscription=self.subscription)
     
     class Meta:
         verbose_name = 'Профиль пользователя'
@@ -61,7 +65,7 @@ class UserProfile(models.Model):
     
     
 class MemoryPage(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memory_pages')
     deceased_first_name = models.CharField(max_length=255, blank=True, null=True)
     deceased_last_name = models.CharField(max_length=255, blank=True, null=True)
     deceased_middle_name = models.CharField(max_length=255, blank=True, null=True)
@@ -91,7 +95,8 @@ class ExtendedMemoryPageInfo(models.Model):
     memory_page = models.OneToOneField(
         MemoryPage,
         on_delete=models.CASCADE,
-        primary_key=True,
+        blank=True,
+        null = True,
         verbose_name = 'Страница памяти'
     )
     place_of_birth = models.CharField(max_length=255, blank=True, null=True)

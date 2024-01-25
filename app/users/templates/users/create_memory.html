@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Page Creation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Create Memory Page</h2>
+        <!-- Форма для MemoryPage -->
+        <form id="memoryPageForm" class="mb-3">
+            <input type="text" class="form-control mb-2" id="deceasedFirstName" placeholder="Deceased First Name">
+            <input type="text" class="form-control mb-2" id="deceasedLastName" placeholder="Deceased Last Name">
+            <!-- Дополнительные поля для MemoryPage -->
+            <button type="submit" class="btn btn-primary">Create Memory Page</button>
+        </form>
+
+        <!-- Форма для ExtendedMemoryPageInfo -->
+        <form id="extendedMemoryPageInfoForm" class="mb-3">
+            <input type="text" class="form-control mb-2" id="placeOfBirth" placeholder="Place of Birth">
+            <input type="text" class="form-control mb-2" id="placeOfDeath" placeholder="Place of Death">
+            <!-- Дополнительные поля для ExtendedMemoryPageInfo -->
+            <button type="submit" class="btn btn-primary">Save Extended Info</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS и Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Ваш JavaScript код -->
+    <script>
+        // JavaScript код будет здесь
+    </script>
+</body>
+</html>
+
+    <script>
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        $(document).ready(function() {
+            // Получение разрешений пользователя
+            $.get("/api/user-permissions", function(permissions) {
+                // Добавляем поля в зависимости от разрешений
+                console.log(permissions);
+                if (permissions.can_add_photos) {
+                    addField("photos", "Add Photos");
+                }
+                if (permissions.can_add_videos) {
+                    addField("videos", "Add Videos");
+                }
+                if (permissions.can_add_audio) {
+                    addField("audio", "Add Audio");
+                }
+                if (permissions.can_add_links) {
+                    addField("links", "Add Links");
+                }
+                if (permissions.can_add_reviews) {
+                    addField("reviews", "Add Reviews");
+                }
+                if (permissions.can_add_place_of_birth) {
+                    addField("place_of_birth", "Place of Birth");
+                }
+                if (permissions.cann_add_place_of_death) {
+                    addField("place_of_death", "Place of Death");
+                }
+                if (permissions.can_add_spouse) {
+                    addField("spouse", "Add Spouse");
+                }
+                if (permissions.can_add_nationality) {
+                    addField("nationality", "Add Nationality");
+                }
+                if (permissions.can_add_occupation) {
+                    addField("occupation", "Add Occupation");
+                }
+                if (permissions.can_add_awards) {
+                    addField("awards", "Add Awards");
+                }
+                if (permissions.can_add_education) {
+                    addField("education", "Add Education");
+                }
+                if (permissions.can_add_family_members) {
+                    addFamilyMembersFields();
+                    document.getElementById('addFamilyMember').addEventListener('click', addFamilyMembersFields);
+                }
+                if (permissions.can_add_hobbies_interests) {
+                    addField("hobbies_interests", "Add Hobbies and Interests");
+                }
+                if (permissions.can_add_life_milestones) {
+                    addField("life_milestones", "Add Life Milestones");
+                }
+                if (permissions.can_add_personal_anecdotes) {
+                    addField("personal_anecdotes", "Add Personal Anecdotes");
+                }
+                if (permissions.can_add_significant_places) {
+                    addField("significant_places", "Add Significant Places");
+                }
+            });
+        
+            // Функция для добавления поля
+            function addField(id, label) {
+                $('#additionalFields').append(`
+                    <div class="form-group">
+                        <label for="${id}">${label}</label>
+                        <input type="text" class="form-control" id="${id}" name="${id}">
+                    </div>
+                `);
+            }
+            function addAwardsFields() {
+                const awardsContainer = document.getElementById('awardsContainer');
+                awardsContainer.insertAdjacentHTML('beforeend', `
+                    <div class="award">
+                        <input type="text" name="award_title[]" placeholder="Award Title">
+                        <textarea name="award_description[]" placeholder="Description"></textarea>
+                        <input type="date" name="award_date[]" placeholder="Date">
+                    </div>
+                    <button type="button" id="addFamilyMember">Add Family Member</button>
+                `);
+            }
+
+            function addFamilyMembersFields() {
+                const familyMembersContainer = document.getElementById('familyMembersContainer');
+                familyMembersContainer.insertAdjacentHTML('beforeend', `
+                    <div class="familyMember">
+                        <input type="text" name="family_member_name[]" placeholder="Name">
+                        <select name="family_member_relationship[]">
+                            <option value="parent">Parent</option>
+                            <option value="sibling">Sibling</option>
+                            <option value="child">Child</option>
+                        </select>
+                    </div>
+
+                `);
+            }
+        
+            // Обработка отправки формы
+            $('#memoryPageForm').submit(function(event) {
+                event.preventDefault();
+                let formData = $(this).serialize();
+            
+                $.ajax({
+                    url: '/api/users/memorypage/',
+                    type: 'POST',
+                    data: formData,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    },
+                    success: function(response) {
+                        console.log('Memory page created:', response);
+                    },
+                    error: function(error) {
+                        console.log('Error creating memory page:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
