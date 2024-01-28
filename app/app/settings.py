@@ -37,11 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
+    'rest_framework',
     
     'users',
-    
-    # 'api',
+    'main',
+    'api',
     
 ]
 
@@ -137,12 +137,15 @@ STATIC_DIR = [BASE_DIR / "static"]
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media_files/'
 
-MEDIA_ROOT = [BASE_DIR.parent / 'media']
+MEDIA_ROOT = BASE_DIR / 'media_files'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+#Настройка для загрузки файлов на диск
+FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15485760  # Примерно 15 MB

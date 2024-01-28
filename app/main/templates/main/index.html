@@ -1,0 +1,137 @@
+{% extends "base/base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+
+<style>
+  .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px; /* Отступы между карточками */
+  }
+  
+  .cards {
+      flex: 1;
+      min-width: 250px; /* Минимальная ширина карточки */
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 5px; /* Скругление углов карточек */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень карточки */
+  }
+  
+  .card-header {
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+  }
+  
+  .card-content {
+      margin-bottom: 15px;
+  }
+
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .image-preview {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #f7f7f7;
+    border: 5px solid rgb(182 226 255 / 60%);
+  }
+  
+  
+  </style>
+
+
+<div class="container-xl mt-5">
+  <div class="row cards">
+    <div class="col-md-7 ">
+      <!-- Блок Поделиться историей -->
+      <h2>ПОДЕЛИСЬ ИСТОРИЕЙ О БЛИЗКОМ ЧЕЛОВЕКЕ</h2>
+      <p class="lead">Лучший способ сохранить память о близком человеке — создать о нем страницу памяти</p>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Поиск по страницам памяти" aria-label="Поиск по страницам памяти">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="button">Найти</button>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <!-- Аватары участников -->
+          {% for avatar in avatars %}
+          <img src="media_files/{{avatar.avatar}}" alt="Avatar" class="rounded-circle" style="width: 50px; height: 50px; margin-right: -13px;">
+          {% endfor %}
+          <!-- Добавьте дополнительные аватары по аналогии -->
+        </div>
+        <span class="badge badge-pill badge-secondary">46564 страницы уже создано</span>
+      </div>
+    </div>
+    <div class="col-md-5 cards ">
+      <div class="text-center mb-2">
+        <button id="refresh-button" class="btn btn-link p-0">Обновить пример страницы</button>
+      </div>
+      <!-- Пустой блок для информации о человеке, который будет заполнен через AJAX -->
+      <div id="deceased-info" class="card border-0">
+        <!-- Сюда будет загружена информация о человеке через AJAX -->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    // Функция для загрузки информации о человеке
+    function loadDeceasedInfo() {
+      $.ajax({
+        url: 'api/user/memory-pages?random=true', // URL для запроса
+        type: 'GET', // Метод запроса
+        dataType: 'json', // Ожидаемый тип данных ответа
+        success: function(data) {
+          // Заполнение блока информацией о человеке
+          $('#deceased-info').html(
+            `<div class="image-container">
+                  <img class="card-img-top image-preview" src="${data.avatar}" alt="Avatar">
+              </div>
+             <div class="card-body">
+               <h4 class="card-title">${data.deceased_first_name} ${data.deceased_middle_name} ${data.deceased_last_name}</h5>
+               <strong class="card-title">${data.deceased_birth_date} — ${data.deceased_death_date}</strong>
+               <p class="card-text border-bottom">${data.epitaph}</p>
+               <a href="${data.id}" class="btn btn-link p-0">Смотреть страницу</a>
+             </div>`
+          );
+        },
+        error: function(xhr, status, error) {
+          // Обработка ошибки запроса
+          console.log(error);
+        }
+      });
+    }
+
+    // Вызов функции при загрузке страницы
+    loadDeceasedInfo();
+
+    // Вызов функции при нажатии кнопки "Обновить пример страницы"
+    $('#refresh-button').click(function(e) {
+      e.preventDefault(); // Предотвращение стандартного поведения кнопки
+      loadDeceasedInfo(); // Обновление информации
+    });
+  });
+</script>
+{% endblock %}

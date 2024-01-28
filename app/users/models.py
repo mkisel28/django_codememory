@@ -44,7 +44,7 @@ class MemoryPage(models.Model):
     deceased_birth_date = models.DateField(blank=True, null=True)
     deceased_death_date = models.DateField(blank=True, null=True)
     epitaph = models.TextField(blank=True, null=True)
-
+    avatar = models.ImageField(upload_to='photo/avatars/', blank=True, null=True)
     #Расширенная информация для платных подписок
     biography = models.TextField(null=True, blank=True)
     place_of_birth = models.CharField(max_length=255, blank=True, null=True)
@@ -70,6 +70,8 @@ class MemoryPage(models.Model):
     def is_paid(self):
         return self.user.subscription.subscription_type != 'free'
     
+    def __str__(self):
+        return f'{self.deceased_first_name} {self.deceased_last_name} Memory Page'
 # class Subscription(models.Model):
 #     name = models.CharField(max_length=255)
 #     description = models.TextField()

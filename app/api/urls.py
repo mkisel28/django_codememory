@@ -31,28 +31,26 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    SubscriptionViewSet, PermissionsViewSet, UserMemoryPage, UserMemoryPageViewSet, UserPermissionsView, UserProfileViewSet, 
-    MemoryPageViewSet, ExtendedMemoryPageInfoViewSet, AwardViewSet, 
-    EducationViewSet, FamilyMemberViewSet, HobbyInterestViewSet
-)
+from .views import UserMemoryPageView
 
 router = DefaultRouter()
-router.register(r'subscriptions', SubscriptionViewSet)
-router.register(r'permissions', PermissionsViewSet)
-router.register(r'userprofiles', UserProfileViewSet)
-router.register(r'memorypages', MemoryPageViewSet)
-router.register(r'extendedmemorypageinfos', ExtendedMemoryPageInfoViewSet)
-router.register(r'awards', AwardViewSet)
-router.register(r'educations', EducationViewSet)
-router.register(r'familymembers', FamilyMemberViewSet)
-router.register(r'hobbyinterests', HobbyInterestViewSet)
+# router.register('memory-page', UserMemoryPageView, basename='user-memory-page')
+# router.register(r'subscriptions', SubscriptionViewSet)
+# router.register(r'permissions', PermissionsViewSet)
+# router.register(r'userprofiles', UserProfileViewSet)
+# router.register(r'memorypages', MemoryPageViewSet)
+# router.register(r'extendedmemorypageinfos', ExtendedMemoryPageInfoViewSet)
+# router.register(r'awards', AwardViewSet)
+# router.register(r'educations', EducationViewSet)
+# router.register(r'familymembers', FamilyMemberViewSet)
+# router.register(r'hobbyinterests', HobbyInterestViewSet)
 # router.register(r'users/memorypage', UserMemoryPageViewSet, basename='user-memory-page')
 
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('user-permissions', UserPermissionsView.as_view(), name='user-permissions'),
-    path('user/memory-pages/<int:pk>', UserMemoryPageViewSet.as_view(), name='user-memory-pages'),
-    path('user/memory-pages/', UserMemoryPage.as_view(), name='user-memory-pages'),
+    path('user/memory-pages', UserMemoryPageView.as_view(), name='user-memory-page'),
+    # path('user-permissions', UserPermissionsView.as_view(), name='user-permissions'),
+    # path('user/memory-pages/<int:pk>', UserMemoryPageViewSet.as_view(), name='user-memory-pages'),
+    # path('user/memory-pages/', UserMemoryPage.as_view(), name='user-memory-pages'),
 ]

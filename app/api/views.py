@@ -1,5 +1,37 @@
-# from django.contrib.auth.models import User
-# from rest_framework import generics, permissions, viewsets, mixins
+from django.contrib.auth.models import User
+from rest_framework import generics, permissions, viewsets, mixins
+from rest_framework.response import Response
+from .serializers import MemoryPageSerializer
+from rest_framework.views import APIView
+from users.models import MemoryPage
+
+
+class UserMemoryPageView(APIView):
+    serializer_class = MemoryPageSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        return MemoryPage.objects.all()
+    
+    def get(self, request):
+        """ 
+        Return a random memory page
+        
+        Args:
+            random: bool
+        """
+        if  request.query_params.get('random', False) == 'true':
+            memory_page = self.get_queryset().order_by('?').first()
+        else:
+            memory_page = self.get_queryset().order_by('?').first()
+        
+        serializer = MemoryPageSerializer(memory_page)
+        return Response(serializer.data)
+
+
+
+
+
 # from .serializers import CurrentUserSerializer, ExtendedMemoryPageInfoSerializer, FamilyMemberSerializer, MemoryPageSerializer, SubscriptionListSerializer, UserSerializer, PermissionSerializer, UserProfileSerializer, SubscriptionSerializer
 # from users.models import ExtendedMemoryPageInfo, FamilyMember, MemoryPage, Permissions, UserProfile, Subscription
 
@@ -143,56 +175,56 @@
 ###############################################
 
 
-from rest_framework import viewsets, status
-from users.models import (
-    Subscription, Permissions, UserProfile, MemoryPage, 
-    ExtendedMemoryPageInfo, Award, Education, FamilyMember, HobbyInterest
-)
-from .serializers import (
-    SubscriptionSerializer, PermissionsSerializer, UserProfileSerializer, 
-    MemoryPageSerializer, ExtendedMemoryPageInfoSerializer, AwardSerializer, 
-    EducationSerializer, FamilyMemberSerializer, HobbyInterestSerializer
-)
+# from rest_framework import viewsets, status
+# from users.models import (
+#     Subscription, Permissions, UserProfile, MemoryPage, 
+#     ExtendedMemoryPageInfo, Award, Education, FamilyMember, HobbyInterest
+# )
+# from .serializers import (
+#     SubscriptionSerializer, PermissionsSerializer, UserProfileSerializer, 
+#     MemoryPageSerializer, ExtendedMemoryPageInfoSerializer, AwardSerializer, 
+#     EducationSerializer, FamilyMemberSerializer, HobbyInterestSerializer
+# )
 
 
 
-from rest_framework import permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
+# from rest_framework import permissions
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Custom permission to only allow owners of an object to edit it.
-    """
+# class IsOwnerOrReadOnly(permissions.BasePermission):
+#     """
+#     Custom permission to only allow owners of an object to edit it.
+#     """
 
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
+#     def has_object_permission(self, request, view, obj):
+#         # Read permissions are allowed to any request,
+#         # so we'll always allow GET, HEAD or OPTIONS requests.
+#         if request.method in permissions.SAFE_METHODS:
+#             return True
 
-        # Write permissions are only allowed to the owner of the memory page.
-        return obj.user == request.user
+#         # Write permissions are only allowed to the owner of the memory page.
+#         return obj.user == request.user
 
-class SubscriptionViewSet(viewsets.ModelViewSet):
-    queryset = Subscription.objects.all()
-    serializer_class = SubscriptionSerializer
+# class SubscriptionViewSet(viewsets.ModelViewSet):
+#     queryset = Subscription.objects.all()
+#     serializer_class = SubscriptionSerializer
 
-class PermissionsViewSet(viewsets.ModelViewSet):
-    queryset = Permissions.objects.all()
-    serializer_class = PermissionsSerializer
+# class PermissionsViewSet(viewsets.ModelViewSet):
+#     queryset = Permissions.objects.all()
+#     serializer_class = PermissionsSerializer
 
-class UserProfileViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
+# class UserProfileViewSet(viewsets.ModelViewSet):
+#     queryset = UserProfile.objects.all()
+#     serializer_class = UserProfileSerializer
 
-class MemoryPageViewSet(viewsets.ModelViewSet):
-    queryset = MemoryPage.objects.all()
-    serializer_class = MemoryPageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+# class MemoryPageViewSet(viewsets.ModelViewSet):
+#     queryset = MemoryPage.objects.all()
+#     serializer_class = MemoryPageSerializer
+#     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
         
 
 
@@ -200,82 +232,82 @@ class MemoryPageViewSet(viewsets.ModelViewSet):
 
 
 
-class ExtendedMemoryPageInfoViewSet(viewsets.ModelViewSet):
-    queryset = ExtendedMemoryPageInfo.objects.all()
-    serializer_class = ExtendedMemoryPageInfoSerializer
+# class ExtendedMemoryPageInfoViewSet(viewsets.ModelViewSet):
+#     queryset = ExtendedMemoryPageInfo.objects.all()
+#     serializer_class = ExtendedMemoryPageInfoSerializer
 
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.all()
-    serializer_class = AwardSerializer
+# class AwardViewSet(viewsets.ModelViewSet):
+#     queryset = Award.objects.all()
+#     serializer_class = AwardSerializer
 
-class EducationViewSet(viewsets.ModelViewSet):
-    queryset = Education.objects.all()
-    serializer_class = EducationSerializer
+# class EducationViewSet(viewsets.ModelViewSet):
+#     queryset = Education.objects.all()
+#     serializer_class = EducationSerializer
 
-class FamilyMemberViewSet(viewsets.ModelViewSet):
-    queryset = FamilyMember.objects.all()
-    serializer_class = FamilyMemberSerializer
+# class FamilyMemberViewSet(viewsets.ModelViewSet):
+#     queryset = FamilyMember.objects.all()
+#     serializer_class = FamilyMemberSerializer
 
-class HobbyInterestViewSet(viewsets.ModelViewSet):
-    queryset = HobbyInterest.objects.all()
-    serializer_class = HobbyInterestSerializer
+# class HobbyInterestViewSet(viewsets.ModelViewSet):
+#     queryset = HobbyInterest.objects.all()
+#     serializer_class = HobbyInterestSerializer
 
 
-class UserPermissionsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+# class UserPermissionsView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        subscription = user.profile.subscription
+#     def get(self, request, *args, **kwargs):
+#         user = request.user
+#         subscription = user.profile.subscription
         
-        if subscription is None:
-            return Response({"error": "Subscription not found"}, status=404)
+#         if subscription is None:
+#             return Response({"error": "Subscription not found"}, status=404)
 
-        try:
-            permissions = Permissions.objects.get(subscription=subscription)
-            serializer = PermissionsSerializer(permissions)
-            return Response(serializer.data)
-        except Permissions.DoesNotExist:
-            return Response({"error": "Permissions not found"}, status=404)
+#         try:
+#             permissions = Permissions.objects.get(subscription=subscription)
+#             serializer = PermissionsSerializer(permissions)
+#             return Response(serializer.data)
+#         except Permissions.DoesNotExist:
+#             return Response({"error": "Permissions not found"}, status=404)
 
 
 
-class UserMemoryPageViewSet(APIView):
-    serializer_class = MemoryPageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+# class UserMemoryPageViewSet(APIView):
+#     serializer_class = MemoryPageSerializer
+#     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     
     
-    def get_object(self, pk):
-        return MemoryPage.objects.get(pk=pk)
+#     def get_object(self, pk):
+#         return MemoryPage.objects.get(pk=pk)
     
-    def get(self, request, pk):
-        memory_page = self.get_object(pk)
-        serializer = MemoryPageSerializer(memory_page)
-        return Response(serializer.data)
+#     def get(self, request, pk):
+#         memory_page = self.get_object(pk)
+#         serializer = MemoryPageSerializer(memory_page)
+#         return Response(serializer.data)
     
-    def post(self, request, pk):
-        memory_page = self.get_object(pk)
+#     def post(self, request, pk):
+#         memory_page = self.get_object(pk)
         
-        serializer = MemoryPageSerializer(memory_page, data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         serializer = MemoryPageSerializer(memory_page, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=request.user)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class UserMemoryPage(APIView):
-    serializer_class = MemoryPageSerializer
-    permission_classes = [permissions.IsAuthenticated]
     
-    def post(self, request):
-        data = MemoryPage.objects.create(user=request.user)
-        serializer = MemoryPageSerializer(data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# class UserMemoryPage(APIView):
+#     serializer_class = MemoryPageSerializer
+#     permission_classes = [permissions.IsAuthenticated]
     
-    def get(self, request):
-        user_profile = UserProfile.objects.get(user=self.request.user)
-        serializer = MemoryPageSerializer(user_profile.user.memory_pages, many=True)
-        return Response(serializer.data)
+#     def post(self, request):
+#         data = MemoryPage.objects.create(user=request.user)
+#         serializer = MemoryPageSerializer(data)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+#     def get(self, request):
+#         user_profile = UserProfile.objects.get(user=self.request.user)
+#         serializer = MemoryPageSerializer(user_profile.user.memory_pages, many=True)
+#         return Response(serializer.data)
