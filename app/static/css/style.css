@@ -1,0 +1,100 @@
+.profile-header-container {
+  margin: 50px auto;
+  text-align: center;
+}
+.profile-header-img {
+  padding: 54px;
+}
+.profile-header-info {
+  margin-top: 20px;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Отступы между карточками */
+}
+
+.cards {
+  flex: 1;
+  min-width: 250px; /* Минимальная ширина карточки */
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px; /* Скругление углов карточек */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень карточки */
+}
+
+.card-header {
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.card-content {
+  margin-bottom: 15px;
+}
+
+
+.image-container {
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+margin-top: 20px;
+}
+
+.image-preview {
+width: 200px;
+height: 200px;
+border-radius: 50%;
+overflow: hidden;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 20px;
+background-color: #f7f7f7;
+border: 5px solid rgb(182 226 255 / 60%);
+}
+
+.no-flex{
+display: inline!important;
+}
+
+blockquote{
+  border-left:none
+}
+
+.quote-badge{
+  background-color: rgba(0, 0, 0, 0.2);   
+}
+
+.quote-box{
+  
+  overflow: hidden;
+  margin-top: -50px;
+  padding-top: -100px;
+  border-radius: 17px;
+  background-color: #2d8a7e;
+  margin-top: 25px;
+  color:white;
+  box-shadow: 2px 2px 20px 3px #00000057;
+  
+}
+
+.quotation-mark{
+  
+  margin-top: -10px;
+  font-weight: bold;
+  font-size:100px;
+  color:white;
+  font-family: "Times New Roman", Georgia, Serif;
+  
+}
+
+.quote-text{
+  
+  font-size: 19px;
+  margin-top: -65px;
+  padding-left: 20px;
+    padding-right: 20px;
+}

@@ -1,0 +1,53 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+
+
+<div class="container profile-header-container">
+<div class="row">
+  <div class="col-md-12">
+    {{ MEDIA_URL }}
+      <img src="{{ page.avatar.url }}" alt="Profile Image" class="rounded-circle image-preview no-flex">
+      <h2>{{ name }}</h2>
+      <p class="lead">{{ page.biography }}</p>
+      <blockquote class="quote-box">
+        <p class="quotation-mark">
+          “
+        </p>
+        <p class="quote-text">
+            {{ page.epitaph }}
+        </p>
+        <hr>
+        <div class="blog-post-actions">
+          <p class="blog-post-bottom pull-left">
+            Abraham Lincoln
+          </p>
+          <p class="blog-post-bottom pull-right">
+            <span class="badge quote-badge">896</span>  ❤
+          </p>
+        </div>
+      </blockquote>
+
+
+      <hr>
+      <div class="profile-header-info">
+          <p><strong>Place of Birth:</strong> {{ page.place_of_birth }}</p>
+          <p><strong>Place of Death:</strong> {{ page.place_of_death }}</p>
+          <p><strong>Children:</strong> {{ page.children_names | join:", " }}</p>
+          <p><strong>Spouse:</strong> {{ page.spouse_name }}</p>
+          <p><strong>Citizenship:</strong> {{ page.citizenship }}</p>
+          <p><strong>Education:</strong> {{ page.education }}</p>
+          <!-- Awards and Achievements -->
+          <p><strong>Awards and Achievements:</strong></p>
+          <ul>
+              {% for award in awards %}
+              <li>{{ award }}</li>
+              {% endfor %}
+          </ul>
+      </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

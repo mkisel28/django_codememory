@@ -36,6 +36,7 @@ class Subscription(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         
+    
 class MemoryPage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memory_pages')
     deceased_first_name = models.CharField(max_length=255, blank=True, null=True)
