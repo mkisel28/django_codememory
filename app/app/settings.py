@@ -153,3 +153,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #Настройка для загрузки файлов на диск
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15485760  # Примерно 15 MB
+
+
+
+
+
+
+LOGFILE = BASE_DIR / 'logs/django.log'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': LOGFILE,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

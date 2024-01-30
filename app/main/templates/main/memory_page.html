@@ -4,13 +4,13 @@
 {% block content %}
 
 
+
 <div class="container profile-header-container">
 <div class="row">
   <div class="col-md-12">
     {{ MEDIA_URL }}
-      <img src="{{ page.avatar.url }}" alt="Profile Image" class="rounded-circle image-preview no-flex">
+      <img src="{% if  page.avatar %}{{ page.avatar.url }}{% endif %}" alt="Profile Image" class="rounded-circle image-preview no-flex">
       <h2>{{ name }}</h2>
-      <p class="lead">{{ page.biography }}</p>
       <blockquote class="quote-box">
         <p class="quotation-mark">
           “
@@ -29,6 +29,7 @@
         </div>
       </blockquote>
 
+      <p class="lead">{{ page.biography }}</p>
 
       <hr>
       <div class="profile-header-info">

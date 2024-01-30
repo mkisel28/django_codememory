@@ -13,10 +13,24 @@ import io
 
 
 class ManageMemoryPageView(View):
-    def get(self, request: HttpRequest):
-        return render(request, 'users/create_memory.html')
+    def get(self, request: HttpRequest, memory_page_id: int = None):
+        if memory_page_id:
+            memory_page = MemoryPage.objects.get(id=memory_page_id, user=request.user)
+            if memory_page.awards:
+                memory_page.hidden_awards = memory_page.awards
+                memory_page.awards = json.loads(memory_page.awards)
+            if memory_page.family_composition:
+                memory_page.hidden_family_composition = memory_page.family_composition
+                memory_page.family_composition = json.loads(memory_page.family_composition)
+            return render(request, 'users/edit_memory.html', {'memory_page': memory_page})
+        
+        else:
+            return render(request, 'users/create_memory.html')
 
-    def post(self, request: HttpRequest):
+    def post(self, request: HttpRequest, memory_page_id: int = None):
+
+
+
         # Использование словаря для упрощения извлечения данных
         form_data = {key: request.POST.get(key) for key in [
             'deceased_first_name', 'deceased_last_name', 'deceased_middle_name', 
@@ -25,7 +39,18 @@ class ManageMemoryPageView(View):
         ]}
 
         image_file = self._upload_cropped_image(request)
-
+        # Обновление существующей страницы памяти
+        if memory_page_id:
+            try:
+                memory_page = MemoryPage.objects.get(id=memory_page_id, user=request.user)
+                if image_file:
+                    memory_page.avatar = image_file
+                for key, value in form_data.items():
+                    setattr(memory_page, key, value)
+                memory_page.save()
+                return HttpResponse("Updated")
+            except MemoryPage.DoesNotExist:
+                return HttpResponseBadRequest("Memory page does not exist")
         try:
             MemoryPage.objects.create(
                 user=request.user, 
@@ -109,6 +134,12 @@ def add_memory_page(request: HttpRequest):
 
 
 def edit_memory_page(request: HttpRequest, memory_page_id: int):
-    # memory_page = MemoryPage.objects.get(id=memory_page_id, user=request.user)
+    memory_page = MemoryPage.objects.get(id=memory_page_id, user=request.user)
+    
+    if memory_page.awards:
+        memory_page.awards = json.loads(memory_page.awards)
+    if memory_page.family_composition:
+        memory_page.family_composition = json.loads(memory_page.family_composition)
 
-    return render(request, 'users/edit_memory.html')
+
+    return render(request, 'users/edit_memory.html', {'memory_page': memory_page})

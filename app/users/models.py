@@ -5,10 +5,6 @@ from django.urls import reverse
 
 
 
-
-
-
-
 class Subscription(models.Model):
     class CHOICES(models.TextChoices):
       FREE = 'free', 'Бесплатная'
