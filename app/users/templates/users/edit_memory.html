@@ -1,47 +1,463 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Memory Page</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4" >
-        <h2>Edit Memory Page</h2>
+{% extends "base/base.html" %}
 
-        <!-- Блок для MemoryPage -->
-        <div id="memoryPageBlock" data-memoryID='{{ memory_page.id }}' class="mb-4">
-            <h3>Basic Information</h3>
-            <form id="editMemoryPageForm">
-                <input type="text" class="form-control mb-2" id="deceasedFirstName" placeholder="{{memory_page.deceased_first_name}}">
-                <input type="text" class="form-control mb-2" id="deceasedLastName" placeholder="{{memory_page.deceased_last_name}}">
-                <!-- Дополнительные поля для MemoryPage -->
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </form>
+{% block content %}
+
+
+<style>
+    .cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* Отступы между карточками */
+    }
+    
+    .card {
+        flex: 1;
+        min-width: 250px; /* Минимальная ширина карточки */
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px; /* Скругление углов карточек */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень карточки */
+    }
+    
+    .card-header {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .card-content {
+        margin-bottom: 15px;
+    }
+    
+
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 20px;
+      }
+      
+      .image-preview {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #f7f7f7;
+        border: 5px solid rgb(182 226 255 / 60%);
+      }
+      
+      #imagePreviewContainer, #croppedImageContainer {
+        width: 100%;
+        margin-top: 20px;
+    }
+    #croppedImageContainer {
+        display: none;
+    }
+    
+    
+    </style>
+    <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css" rel="stylesheet">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Редактирование</h1>
+            </div>
+        </div>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="deceasedAvatarInput" class="image-container image-preview">
+            {% if memory_page.page_avatar %}
+            <p id="text-input-image" style="display: none;">Загрузить фото</p>
+
+            <img id="selectedImage" src="{{ memory_page.page_avatar.url }}" style="display: block; width: 200px; height: 200px;">
+            
+            {% else %}
+            <p id="text-input-image">Загрузить фото</p>
+
+            <img id="selectedImage" style="display: none; width: 200px; height: 200px;" />
+            {% endif %}
+            <input type="file" class="form-control" id="deceasedAvatarInput" name="memory_page_avatar_photo" accept="image/*" style="display: none;">
+        </label>
+        {% if memory_page.page_avatar %}
+        <button type="button" id="clearButton" class="btn btn-warning">Очистить</button>
+        {% else %}
+        <button type="button" id="clearButton" class="btn btn-warning" style="display: none;">Очистить</button>
+        {% endif %}
+        <!-- Контейнер для кадрирования -->
+        <div id="imagePreviewContainer" class="form-group" style="display: none;">
+            <img id="imagePreview" style="max-width: 700px; max-height: 700px;">
+            <button type="button" id="cropButton" class="btn btn-success">Кадрировать</button>
+        </div>
+    
+        <!-- Скрытое поле для хранения Data URL -->
+        <input type="hidden" id="croppedImageData" name="cropped_image_data">
+    </div>
+    
+    
+    
+
+
+    <!--   ФИО -->
+    <div class="cards-container">
+
+        <div class="form-group card">
+            <label for="deceasedFirstName">Имя</label>
+            <input type="text" class="form-control" id="deceasedFirstName" name="deceased_first_name" placeholder="Максим" value="{{ memory_page.deceased_first_name }}">
         </div>
 
-        <!-- Блок для ExtendedMemoryPageInfo -->
-        <div id="extendedInfoBlock" class="mb-4">
-            <h3>Extended Information</h3>
-            <form id="editExtendedInfoForm">
-                <input type="text" class="form-control mb-2" id="placeOfBirth" placeholder="Place of Birth">
-                <input type="text" class="form-control mb-2" id="placeOfDeath" placeholder="Place of Death">
-                <!-- Дополнительные поля для ExtendedMemoryPageInfo -->
-                <button type="submit" class="btn btn-primary">Save Extended Info</button>
-            </form>
+        <div class="form-group card">
+            <label for="deceasedLastName">Фамилия</label>
+            <input type="text" class="form-control" id="deceasedLastName" name="deceased_last_name" placeholder="Клюх" value="{{ memory_page.deceased_last_name }}">
+        </div>
+        <div class="form-group card">
+            <label for="deceasedMiddleName">Отчество</label>
+            <input type="text" class="form-control" id="deceasedMiddleName" name="deceased_middle_name" placeholder="Педрович" value="{{ memory_page.deceased_middle_name }}">
+        </div>
+
+    </div>
+    <!--    -->
+    <div class="cards-container">
+
+        <div class="form-group card">
+            <label for="deceasedBirthDate">Дата рождения</label>
+            <input type="date" class="form-control" id="deceasedBirthDate" name="deceased_birth_date" value="{{ memory_page.deceased_birth_date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="form-group card">
+            <label for="deceasedDeathDate">Дата смерти</label>
+            <input type="date" class="form-control" id="deceasedDeathDate" name="deceased_death_date" value="{{ memory_page.deceased_death_date|date:'Y-m-d' }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="epitaph">Эпитафия</label>
+        <textarea class="form-control" id="epitaph" name="epitaph" rows="3"></textarea>
+        <blockquote class="quote-box">
+            <p class="quotation-mark">
+              “
+            </p>
+
+            <textarea class="form-control quote-text" id="epitaph" name="epitaph" rows="3" value="">{{ memory_page.epitaph }}</textarea>
+            <hr>
+            <div class="blog-post-actions">
+              <p class="blog-post-bottom pull-left">
+                Abraham Lincoln
+              </p>
+              <p class="blog-post-bottom pull-right">
+                <span class="badge quote-badge">896</span>  ❤
+              </p>
+            </div>
+          </blockquote>
+    </div>
+
+    <!-- Дополнительные поля для расширенной информации -->
+    <div class="form-group">
+        <label for="biography">Биография</label>
+        <textarea class="form-control" id="biography" name="biography" rows="4"></textarea>
+    </div>
+    {% if request.user_subscription_type %}
+    <input  type="hidden" id="hiddenAwards" name="awards"value="{% if memory_page.hidden_awards %}{{  memory_page.hidden_awards }}{% endif %}">
+    <input  type="hidden" id="hiddenFamilyMembers" name="family_composition" value="{% if memory_page.hidden_family_composition  %}{{  memory_page.hidden_family_composition }}{% endif %}">
+                                                                                
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <!-- Блок Наград -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Награды</label>
+                    <div class = 'cards-container' id="awards-list">
+                        <!-- Сюда добавляются элементы -->
+                        {% if memory_page.awards %}
+                        {% for award in memory_page.awards %}
+                        <div class="award-entry card">
+                            <p>Date: <span class="award-date">{{ award.date  }}</span></p>
+                            <p>Title: <span class="award-title">{{ award.title }}</span></p>
+                            <p>Description: <span class="award-description">{{ award.description  }}</span></p>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <!-- Кнопка для открытия модального окна -->
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#awardModal">Добавить награду</button>
+                </div>
+            </div>
+    
+            <!-- Блок Семейного Состава -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Родственики</label>
+                    <div class = 'cards-container' id="family-list">
+                        <!-- Сюда добавляются элементы -->
+                        {% if memory_page.family_composition %}
+                        {% for family in memory_page.family_composition %}
+                        <div class="family-entry card">
+                            <p>Name: <span class="family-name">{{ family.name }}</span></p>
+                            <p>Relation: <span class="family-relation">{{ family.relation }}</span></p>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <!-- Кнопка для открытия модального окна -->
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#familyModal">Добавить родственика</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS и Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Модальное окно для Наград -->
+<!-- Модальное окно для Наград -->
+<div class="modal fade" id="awardModal" tabindex="-1" role="dialog" aria-labelledby="awardModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="awardModalLabel">Добавить награду</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Форма для добавления награды -->
 
-    <!-- Ваш JavaScript код -->
-    <script>
-        // JavaScript код будет здесь
-    </script>
-</body>
-</html>
+                <div class="form-group">
+                    <label for="awardTitle">Название награды</label>
+                    <input type="text" class="form-control" id="awardTitle" name="award_title">
+                </div>
+                <div class="form-group">
+                    <label for="awardDescription">Описание награды</label>
+                    <textarea class="form-control" id="awardDescription" name="award_description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="awardDate">Дата получения</label>
+                    <input type="date" class="form-control" id="awardDate" name="award_date">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addAward()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для Семейного Состава -->
+<div class="modal fade" id="familyModal" tabindex="-1" role="dialog" aria-labelledby="familyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="familyModalLabel">Добавить члена семьи</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Форма для добавления члена семьи -->
+                <div class="form-group">
+                    <label for="familyName">Имя</label>
+                    <input type="text" class="form-control" id="familyName" name="family_name">
+                </div>
+                <div class="form-group">
+                    <label for="familyRelation">Кем приходится</label>
+                    <input type="text" class="form-control" id="familyRelation" name="family_relation">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addFamilyMember()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Опубликовать</button>
+</form>
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    function addAward() {
+        // Получение данных из формы модального окна наград
+        var awardDate = document.getElementById('awardDate').value;
+        var awardTitle = document.getElementById('awardTitle').value;
+        var awardDescription = document.getElementById('awardDescription').value;
+    
+        // Создание нового элемента для списка наград
+        var awardEntry = document.createElement('div');
+        awardEntry.classList.add('award-entry');
+        awardEntry.classList.add('card');
+        awardEntry.innerHTML = `
+            <p>Date: <span class="award-date">${awardDate}</span></p>
+            <p>Title: <span class="award-title">${awardTitle}</span></p>
+            <p>Description: <span class="award-description">${awardDescription}</span></p>
+        `;
+    
+        // Добавление нового элемента в контейнер наград
+        document.getElementById('awards-list').appendChild(awardEntry);
+    
+        // Очистка формы и закрытие модального окна
+        $('#awardModal').modal('hide');
+        document.getElementById('awardDate').value = '';
+        document.getElementById('awardTitle').value = '';
+        document.getElementById('awardDescription').value = '';
+
+        updateHiddenField('awards');
+    }
+
+
+    function addFamilyMember() {
+        // Получение данных из формы модального окна семьи
+        var familyName = document.getElementById('familyName').value;
+        var familyRelation = document.getElementById('familyRelation').value;
+    
+        // Создание нового элемента для списка семьи
+        var familyEntry = document.createElement('div');
+        familyEntry.classList.add('family-entry');
+        familyEntry.classList.add('card');
+        familyEntry.innerHTML = `
+            <p>Name: <span class="family-name">${familyName}</span></p>
+            <p>Relation: <span class="family-relation">${familyRelation}</span></p>
+        `;
+    
+        // Добавление нового элемента в контейнер семьи
+        document.getElementById('family-list').appendChild(familyEntry);
+    
+        // Очистка формы и закрытие модального окна
+        $('#familyModal').modal('hide');
+        document.getElementById('familyName').value = '';
+        document.getElementById('familyRelation').value = '';
+    
+        updateHiddenField('family_composition');
+    }
+
+    function updateHiddenField(type) {
+        var items = [];
+        if (type === 'awards') {
+            var awards = document.querySelectorAll('.award-entry');
+            awards.forEach(function(award) {
+                items.push({
+                    date: award.querySelector('.award-date').textContent,
+                    title: award.querySelector('.award-title').textContent,
+                    description: award.querySelector('.award-description').textContent
+                });
+            });
+            document.getElementById('hiddenAwards').value = JSON.stringify(items);
+    } else if (type === 'family_composition') {
+        var familyMembers = document.querySelectorAll('.family-entry');
+        familyMembers.forEach(function(member) {
+            items.push({
+                name: member.querySelector('.family-name').textContent,
+                relation: member.querySelector('.family-relation').textContent
+            });
+        });
+        document.getElementById('hiddenFamilyMembers').value = JSON.stringify(items);
+    }
+}
+</script>
+    
+
+
+
+
+<script>
+    
+
+    function compressImage(blob, maxWidth, maxHeight, quality, callback) {
+        var img = new Image();
+        img.src = URL.createObjectURL(blob);
+    
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+    
+            var ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+    
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    
+            canvas.toBlob(function(compressedBlob) {
+                callback(compressedBlob);
+            }, 'image/jpeg', quality);
+        };
+    }
+
+
+    var avatarInput = document.getElementById('deceasedAvatarInput');
+    var imagePreview = document.getElementById('imagePreview');
+    var selectedImage = document.getElementById('selectedImage');
+    var clearButton = document.getElementById('clearButton');
+    var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    var textInputImage = document.getElementById('text-input-image');
+    var cropper;
+    
+    avatarInput.addEventListener('change', function (e) {
+        var files = e.target.files;
+        if (files && files.length > 0) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = reader.result;
+                imagePreviewContainer.style.display = 'block';
+                selectedImage.style.display = 'none';
+                clearButton.style.display = 'none';
+    
+                if (cropper) {
+                    cropper.destroy();
+                }
+    
+                cropper = new Cropper(imagePreview, {
+                    aspectRatio: 1,
+                    viewMode: 1
+                });
+            };
+            reader.readAsDataURL(files[0]);
+        }
+    });
+    
+
+    document.getElementById('cropButton').addEventListener('click', function() {
+        cropper.getCroppedCanvas().toBlob(function(blob) {
+            compressImage(blob, 800, 800, 0.7, function(compressedBlob) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    document.getElementById('croppedImageData').value = reader.result;
+    
+                    selectedImage.src = reader.result;
+                    selectedImage.style.display = 'block';
+                    imagePreviewContainer.style.display = 'none';
+                    clearButton.style.display = 'block';
+                    textInputImage.style.display = 'none';
+
+                };
+                reader.readAsDataURL(compressedBlob);
+            });
+        });
+    });
+    
+    clearButton.addEventListener('click', function() {
+        document.getElementById('croppedImageData').value = '';
+        selectedImage.style.display = 'none';
+        clearButton.style.display = 'none';
+        avatarInput.value = '';
+        textInputImage.style.display = 'block';
+    });
+
+    
+</script>
+
+
+
+
+
+
+
+{% endblock %}

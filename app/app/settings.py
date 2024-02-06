@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     
     'users',
+    'main',
     'api',
     
 ]
@@ -52,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'middleware.subscription_middleware.SubscriptionMiddleware'
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -81,7 +84,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "code_memory",
+        "NAME": "code_memory_2",
         "USER": "postgres",
         "PASSWORD": "Maksim2001",
         "HOST": "localhost",
@@ -135,9 +138,8 @@ STATIC_DIR = [BASE_DIR / "static"]
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = [BASE_DIR.parent / 'media']
+MEDIA_URL = '/media_files/'
+MEDIA_ROOT = BASE_DIR / 'media_files'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
